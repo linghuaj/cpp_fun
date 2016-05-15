@@ -22,6 +22,7 @@ class Solution {
 
             //TODO: probably int interate string;
             while (i != j+1 && i!= j){
+                //if the deferenced value is not in the hash table
                 if (m.find(tolower(*i)) == m.end()){
                     i++;
                     continue;
