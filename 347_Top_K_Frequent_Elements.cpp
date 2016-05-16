@@ -33,6 +33,7 @@ class Solution {
             int count = 0;
 
             while (count < k){
+                //without & it uses vector as copy of another vector, which use extra time and space. 
                 vector<int>& arr = (*it).second;
                 for (auto &v: arr){
                     result.push_back(v);
