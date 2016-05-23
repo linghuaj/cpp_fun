@@ -32,36 +32,57 @@
  *     const vector<NestedInteger> &getList() const;
  * };
  */
+
 typedef vector<NestedInteger>::iterator Ni;
 typedef vector<NestedInteger> NList;
 
 class NestedIterator {
     public:
         NestedIterator(vector<NestedInteger> &nestedList) {
-            expand(nestedList);
-            cout <<'n';
+            stk_.push(nestedList.begin());
+            stk_end_.push(nestedList.end());
+            expand();
         }
-
-        void expand(NList &nestedList){
-            Ni f = nestedList.begin();
-            Ni e = nestedList.end();
-            if (f == e){
+        //get the top pointer, and expand if needed
+        void expand(){
+            //Ni curIt = stk_.top();
+            cout << "stk_.size()" << stk_.size() << endl << " stk_end_.size()" << stk_end_.size() << (stk_.top() == stk_end_.top()) << endl; 
+            //if hits end
+            while (!stk_.empty() && stk_.top() == stk_end_.top()){
+                stk_.pop();
+                stk_end_.pop();
+                if (!stk_.empty()){
+                    stk_.top() ++;
+                }
+            }
+            if (stk_.empty()){
                 return;
             }
-
-            while (true){
-                stk_.push(f);
-                stk_end_.push(e);
-
-                NestedInteger& fn = *(f);
-                if (fn.isInteger() == true){
-                    break;
+            //if it is not hitting end;
+            //if integer no need to expand
+            if ((*stk_.top()).isInteger()){
+                return;
+            }
+            //if element is nested;
+            while (!(*stk_.top()).isInteger()){
+                Ni newIterator = (*stk_.top()).getList().begin();
+                Ni newEndIterator = (*stk_.top()).getList().end();
+                stk_.push(newIterator);
+                stk_end_.push(newEndIterator);
+                while (!stk_.empty() && stk_.top() == stk_end_.top()){
+                    stk_.pop();
+                    stk_end_.pop();
+                    if (!stk_.empty()){
+                        stk_.top() ++;
+                    }
                 }
-                NList& list = fn.getList();
-                f = list.begin();
-                e = list.end();
-                if (f == e){
-                    break;
+                if (stk_.empty()){
+                    return;
+                }
+                //if it is not hitting end;
+                //if integer no need to expand
+                if ((*stk_.top()).isInteger()){
+                    return;
                 }
             }
         }
@@ -71,21 +92,9 @@ class NestedIterator {
             //move the most current one to next;
             Ni& lastI = stk_.top();
             result = (*lastI).getInteger();
-            //stack stores all the iterator
-            while (stk_.top() + 1 == stk_end_.top()){
-                stk_.pop();
-                stk_end_.pop();
-            }
-            cout <<'n2';
-            stk_.top() ++;
-            Ni& newLastI = stk_.top();
-            cout <<'n3';
-            // Ni& lastI = stk_.top();
-            if ((*newLastI).isInteger() == true){
-                stk_.push(newLastI);
-            }else{
-                expand((*newLastI).getList());
-            }
+            lastI ++;
+
+            expand();
             return result;
         }
 
